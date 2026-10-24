@@ -29,7 +29,10 @@ on:
       - 'bun.lock'
       - '.github/workflows/build-debug-apk.yml'
 
-jobs:
+permissions:
+  contents: read
+  
+  jobs:
   build-debug-apk:
     name: Build SouvikTube Debug APK
     runs-on: ubuntu-latest
