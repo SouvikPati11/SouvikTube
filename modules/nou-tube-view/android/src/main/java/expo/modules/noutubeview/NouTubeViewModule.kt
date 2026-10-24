@@ -303,7 +303,7 @@ class NouTubeViewModule : Module() {
         .addCredentialOption(googleIdOption)
         .build()
       try {
-        val result = CredentialManager.create(activity).getCredential(request, activity)
+        val result = CredentialManager.create(activity).getCredential(context = activity, request = request)
         val googleCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
         googleCredential.idToken
           ?: throw Exception("GOOGLE_SIGN_IN_FAILED: Google returned no ID token")
