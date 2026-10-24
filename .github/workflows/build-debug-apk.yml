@@ -29,6 +29,9 @@ on:
       - 'bun.lock'
       - '.github/workflows/build-debug-apk.yml'
 
+permissions:
+  contents: read
+
 jobs:
   build-debug-apk:
     name: Build SouvikTube Debug APK

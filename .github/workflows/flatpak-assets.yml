@@ -5,6 +5,9 @@ on:
     branches:
       - release-desktop
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
