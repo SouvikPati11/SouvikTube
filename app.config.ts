@@ -17,16 +17,16 @@ const intentFilters = [
 
 module.exports = ({ config }: { config: ExpoConfig }) => {
   return {
-    name: 'NouTube',
-    slug: 'noutube',
+    name: 'SouvikTube',
+    slug: 'souviktube',
     version,
     icon: './assets/images/icon.png',
-    scheme: 'noutube',
+    scheme: 'souviktube',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'jp.nonbili.noutube',
+      bundleIdentifier: 'com.souvikpati.souviktube',
       appleTeamId: 'NXW8RMPV8L',
       buildNumber,
       infoPlist: {
@@ -44,7 +44,7 @@ module.exports = ({ config }: { config: ExpoConfig }) => {
         backgroundColor: '#ffffff',
       },
       predictiveBackGestureEnabled: false,
-      package: 'jp.nonbili.noutube',
+      package: 'com.souvikpati.souviktube',
       intentFilters,
     },
     web: {
@@ -85,7 +85,7 @@ module.exports = ({ config }: { config: ExpoConfig }) => {
         'expo-sharing',
         {
           // No ios entry: the share extension needs the app group
-          // group.jp.nonbili.noutube registered with the Apple team before it
+          // group.com.souvikpati.souviktube registered with the Apple team before it
           // can be signed. Until then lib/incoming-share.ios.ts stands in.
           android: {
             enabled: true,
