@@ -13,6 +13,15 @@ import expo.modules.kotlin.functions.Coroutine
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.kotlin.jni.JavaScriptObject
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialCustomException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.GetCredentialProviderConfigurationException
+import androidx.credentials.exceptions.NoCredentialException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -267,6 +276,52 @@ class NouTubeViewModule : Module() {
 
     Function("getTranslationSupportedLanguages") {
       NouTranslation.getSupportedLanguages()
+    }
+
+    // Sign in with Google via Android Credential Manager. Shows the system
+    // account selector for Google accounts already on the device; no
+    // password is typed into the app and nothing is read from the WebView.
+    // Returns the Google ID token; the JS side exchanges it with Supabase
+    // (signInWithIdToken), which validates it against Google's keys.
+    // Errors are thrown with a GOOGLE_SIGN_IN_<CODE> prefix so the JS side
+    // can map them to user-facing handling (see lib/supabase/google-sign-in.ts).
+    // serverClientId is the OAuth "Web application" client ID from Google
+    // Cloud (EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID); nonce binds the token to
+    // this attempt. Requires a Google Cloud Android OAuth client for this
+    // app's signing certificate, otherwise no credential is returned.
+    AsyncFunction("signInWithGoogle") Coroutine { serverClientId: String, nonce: String ->
+      val activity = appContext.currentActivity
+        ?: throw Exception("GOOGLE_SIGN_IN_UNAVAILABLE: no current activity")
+      val googleIdOption = GetGoogleIdOption.Builder()
+        .setServerClientId(serverClientId)
+        // false: first-time sign-in must also offer accounts that have never
+        // signed in to this app before, not only previously authorized ones.
+        .setFilterByAuthorizedAccounts(false)
+        .setNonce(nonce)
+        .build()
+      val request = GetCredentialRequest.Builder()
+        .addCredentialOption(googleIdOption)
+        .build()
+      try {
+        val result = CredentialManager.create(activity).getCredential(request, activity)
+        val googleCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
+        googleCredential.idToken
+          ?: throw Exception("GOOGLE_SIGN_IN_FAILED: Google returned no ID token")
+      } catch (e: GetCredentialCancellationException) {
+        throw Exception("GOOGLE_SIGN_IN_CANCELLED: ${e.message}")
+      } catch (e: NoCredentialException) {
+        throw Exception("GOOGLE_SIGN_IN_NO_CREDENTIAL: ${e.message}")
+      } catch (e: GetCredentialProviderConfigurationException) {
+        throw Exception("GOOGLE_SIGN_IN_UNAVAILABLE: ${e.message}")
+      } catch (e: GetCredentialCustomException) {
+        throw Exception("GOOGLE_SIGN_IN_FAILED: ${e.message}")
+      } catch (e: GetCredentialException) {
+        val detail = e.message ?: ""
+        if (detail.contains("network", ignoreCase = true) || detail.contains("timeout", ignoreCase = true)) {
+          throw Exception("GOOGLE_SIGN_IN_NETWORK: $detail")
+        }
+        throw Exception("GOOGLE_SIGN_IN_FAILED: $detail")
+      }
     }
 
     // Resolves once the login screen is closed, with or without a token.
