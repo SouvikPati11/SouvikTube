@@ -69,6 +69,11 @@ dependencies {
   // flow runs through Google Play services.
   implementation 'androidx.credentials:credentials:1.5.0'
   implementation 'androidx.credentials:credentials-play-services-auth:1.5.0'
+  // The Google ID option/credential classes (GetGoogleIdOption,
+  // GoogleIdTokenCredential) live in this separate artifact, not in the
+  // androidx.credentials artifacts above; omitting it breaks compilation
+  // with "Unresolved reference 'libraries'".
+  implementation 'com.google.android.libraries.identity.googleid:googleid:1.1.0'
   implementation 'io.github.junkfood02.youtubedl-android:library:0.17.3'
   implementation 'io.github.junkfood02.youtubedl-android:ffmpeg:0.17.3'
   fullImplementation 'com.google.mlkit:translate:17.0.3'
