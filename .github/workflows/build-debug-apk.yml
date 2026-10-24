@@ -1,11 +1,11 @@
 name: Build Debug APK
 
-# Builds the SouvikTube Android Debug APK (fullDebug variant) in GitHub's
+# Builds the Tou2 Android Debug APK (fullDebug variant) in GitHub's
 # cloud. No signing secrets are required: debug builds are signed with the
 # standard Android debug key that Gradle generates automatically.
 #
 # The resulting APK is uploaded as a downloadable Actions artifact named
-# "SouvikTube-v1.0.0-debug".
+# "Tou2-v1.0.0-debug".
 
 on:
   workflow_dispatch:
@@ -31,7 +31,7 @@ on:
 
 jobs:
   build-debug-apk:
-    name: Build SouvikTube Debug APK
+    name: Build Tou2 Debug APK
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -73,8 +73,8 @@ jobs:
           grep -q "applicationId 'com.souvikpati.souviktube'" android/app/build.gradle
           grep -q 'versionName "1.0.0"' android/app/build.gradle
           echo "Checking generated app name (strings.xml) ..."
-          grep -rq "SouvikTube" android/app/src/main/res/values/strings.xml
-          echo "App identity verified: com.souvikpati.souviktube / 1.0.0 / SouvikTube"
+          grep -rq "Tou2" android/app/src/main/res/values/strings.xml
+          echo "App identity verified: com.souvikpati.souviktube / 1.0.0 / Tou2"
 
       - name: Build Debug APK (fullDebug variant)
         working-directory: android
@@ -96,7 +96,7 @@ jobs:
       - name: Upload Debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SouvikTube-v1.0.0-debug
+          name: Tou2-v1.0.0-debug
           path: android/app/build/outputs/apk/full/debug/*.apk
           if-no-files-found: error
           retention-days: 30
