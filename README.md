@@ -1,8 +1,8 @@
-# <img src="desktop/icon.png" align="top" height="44"> SouvikTube
+# <img src="assets/images/icon.png" align="top" height="44"> Tou2
 
 Android, iOS, and Desktop app for YouTube and YouTube Music.
 
-> SouvikTube is a rebranded fork of [NouTube](https://github.com/nonbili/NouTube) by the NouTube contributors. The original project is licensed under the GNU Affero General Public License v3.0 (see [LICENSE](LICENSE)); this fork keeps that license, its copyright notices, and this attribution. SouvikTube is not the original NouTube project.
+> Tou2 is a rebranded fork of [NouTube](https://github.com/nonbili/NouTube) by the NouTube contributors. The original project is licensed under the GNU Affero General Public License v3.0 (see [LICENSE](LICENSE)); this fork keeps that license, its copyright notices, and this attribution. Tou2 is not the original NouTube project.
 
 Install from F-Droid, or download APK from GitHub.
 
