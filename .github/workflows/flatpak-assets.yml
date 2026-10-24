@@ -5,7 +5,10 @@ on:
     branches:
       - release-desktop
 
-jobs:
+permissions:
+  contents: read
+  
+  jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
