@@ -6,7 +6,10 @@ on:
       - main
   pull_request:
 
-jobs:
+permissions:
+  contents: read
+  
+  jobs:
   test:
     runs-on: ubuntu-latest
 
