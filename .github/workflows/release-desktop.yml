@@ -9,6 +9,9 @@ defaults:
   run:
     working-directory: desktop
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
