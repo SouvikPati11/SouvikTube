@@ -17,16 +17,16 @@ const intentFilters = [
 
 module.exports = ({ config }: { config: ExpoConfig }) => {
   return {
-    name: 'SouvikTube',
-    slug: 'souviktube',
+    name: 'NouTube',
+    slug: 'noutube',
     version,
     icon: './assets/images/icon.png',
-    scheme: 'souviktube',
+    scheme: 'noutube',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.souvikpati.souviktube',
+      bundleIdentifier: 'jp.nonbili.noutube',
       appleTeamId: 'NXW8RMPV8L',
       buildNumber,
       infoPlist: {
@@ -38,13 +38,14 @@ module.exports = ({ config }: { config: ExpoConfig }) => {
     android: {
       versionCode,
       permissions: ['RECORD_AUDIO', 'MODIFY_AUDIO_SETTINGS', 'POST_NOTIFICATIONS', 'WAKE_LOCK'],
+      blockedPermissions: ['android.permission.SYSTEM_ALERT_WINDOW'],
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         monochromeImage: './assets/images/monochrome-icon.png',
         backgroundColor: '#ffffff',
       },
       predictiveBackGestureEnabled: false,
-      package: 'com.souvikpati.souviktube',
+      package: 'jp.nonbili.noutube',
       intentFilters,
     },
     web: {
@@ -85,7 +86,7 @@ module.exports = ({ config }: { config: ExpoConfig }) => {
         'expo-sharing',
         {
           // No ios entry: the share extension needs the app group
-          // group.com.souvikpati.souviktube registered with the Apple team before it
+          // group.jp.nonbili.noutube registered with the Apple team before it
           // can be signed. Until then lib/incoming-share.ios.ts stands in.
           android: {
             enabled: true,
