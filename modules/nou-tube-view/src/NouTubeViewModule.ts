@@ -49,6 +49,12 @@ declare class NouTubeViewModule extends NativeModule {
   isSystemDesktopMode(): boolean
   translateText(text: string, targetLanguage: string): Promise<{ text: string; sourceLanguage?: string }>
   getTranslationSupportedLanguages(): string[]
+  /* Sign in with Google via Android Credential Manager. Returns the Google
+   * ID token for the account the user picked; the JS side exchanges it with
+   * Supabase. Throws Errors prefixed GOOGLE_SIGN_IN_<CODE> (see
+   * lib/supabase/google-sign-in.ts). Android only; unavailable on other
+   * platforms. */
+  signInWithGoogle(serverClientId: string, nonce: string): Promise<string>
   /* Opens the Discord login and resolves once it is closed. */
   discordLogin(): Promise<{ loggedIn: boolean }>
   discordLogout(): void
