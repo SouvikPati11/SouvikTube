@@ -2,13 +2,11 @@ import { Pressable, ScrollView, View, useColorScheme } from 'react-native'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState, type ReactNode } from 'react'
 import { clsx, isWeb, nIf } from '@/lib/utils'
 import { useValue } from '@legendapp/state/react'
-import { auth$ } from '@/states/auth'
 import { settings$ } from '@/states/settings'
 import { t } from 'i18next'
-import { capitalize } from 'es-toolkit'
 import MaterialIcons, { type MaterialIconsIconName } from '@react-native-vector-icons/material-icons'
 import AntDesign from '@react-native-vector-icons/ant-design'
-import { ABOUT_SOCIAL_LINKS } from '@/lib/about-links'
+import { ABOUT_SOCIAL_LINKS, WEBSITE_URL } from '@/lib/about-links'
 import { queryClient } from '@/lib/query/client'
 import { getReleaseFeedQuery } from '@/lib/query/changelog'
 import { mainClient } from '@/lib/main-client'
@@ -28,7 +26,6 @@ import { SettingsChangelogContent } from './SettingsModalTabChangelog'
 import { SettingsUserStylesContent } from './SettingsUserStylesContent'
 import { SettingsBlocklistContent } from './SettingsBlocklistContent'
 import { useTwColor } from '@/lib/theme'
-import { FAQ_URL } from '@/lib/help'
 
 // The upstream repository and donation links were removed from the About
 // screen. The social links that remain live in lib/about-links.ts.
@@ -143,10 +140,6 @@ const InstagramIcon = () => {
   return <AntDesign name="instagram" size={18} color={isDark ? tw('zinc-300') : tw('slate-600')} />
 }
 
-function formatPlanLabel(plan?: string) {
-  return plan ? capitalize(plan) : 'Free'
-}
-
 export interface SettingsTreeHandle {
   /* Pops one page, or reports that the tree is already at its root and the
    * host has to decide what a back press means. */
@@ -175,7 +168,6 @@ export const SettingsTree = forwardRef<
 >(({ version, onExit, renderSync, showShellTools = true }, ref) => {
   const tw = useTwColor()
   const theme = useValue(settings$.theme)
-  const { user, plan } = useValue(auth$)
   const colorScheme = useColorScheme()
   const isDark = colorScheme !== 'light'
   const [pageStack, setPageStack] = useState<SettingsPage[]>(['home'])
@@ -318,13 +310,6 @@ export const SettingsTree = forwardRef<
             <SettingsSection label={t('settings.tools')}>
               <View className={surfaceCls}>
                 <SettingsNavRow
-                  title={t('sync.label')}
-                  description={user?.email || t('settings.syncHintShort')}
-                  icon="sync"
-                  meta={formatPlanLabel(plan)}
-                  onPress={() => pushPage('sync')}
-                />
-                <SettingsNavRow
                   title={t('settings.transfer')}
                   description={t('settings.transferHint')}
                   icon="import-export"
@@ -429,7 +414,7 @@ export const SettingsTree = forwardRef<
                 <SettingsExternalRow
                   title={t('about.faq')}
                   detail={t('about.faqHint')}
-                  href={FAQ_URL}
+                  href={WEBSITE_URL}
                   icon="help-outline"
                   isLast
                 />

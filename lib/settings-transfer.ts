@@ -30,7 +30,10 @@ export const createSettingsBackup = (): SettingsBackup => ({
 
 export const exportSettingsJson = () => JSON.stringify(createSettingsBackup(), null, 2)
 
-export const settingsBackupFilename = () => `NouTube_settings_${Date.now()}.json`
+// Exported settings files use the Tou2 prefix. Import never inspects the
+// filename — it validates the file contents (kind/version) — so backups
+// exported under the old `NouTube_settings_*.json` name keep importing.
+export const settingsBackupFilename = () => `Tou2_settings_${Date.now()}.json`
 
 /**
  * Parse a settings backup file. Unknown or missing sections are dropped, every

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { bookmarks$, newBookmark } from '@/states/bookmarks'
 import { folders$, newFolder } from '@/states/folders'
-import { exportBookmarksCsv } from './export'
+import { bookmarksCsvFilename, exportBookmarksCsv } from './export'
 import { importBookmarksCsv } from './import'
 
 describe('bookmarks csv', () => {
@@ -33,5 +33,14 @@ describe('bookmarks csv', () => {
     const recreated = folders$.folders.get().find((x) => x.id === newFolderId)
     expect(recreated?.name).toBe('Live sets')
     expect(recreated?.json.tab).toBe('watch')
+  })
+})
+
+describe('bookmarks export filename', () => {
+  it('uses the Tou2 prefix and keeps the .csv extension', () => {
+    const name = bookmarksCsvFilename()
+    expect(name.startsWith('Tou2_')).toBe(true)
+    expect(name).toContain('_bookmarks_')
+    expect(name.endsWith('.csv')).toBe(true)
   })
 })

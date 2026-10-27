@@ -237,6 +237,28 @@ android {
     }`,
       )
 
+    // Optional Tou2 release signing. When a release keystore is supplied via
+    // environment (the release workflow decodes it from CI secrets), wire it
+    // into the release build type; without it, release builds stay unsigned
+    // exactly as before. No secret ever appears here — only variable names —
+    // and prebuilds without those variables are unaffected.
+    if (!config.modResults.contents.includes('TOU2_KEYSTORE_FILE')) {
+      config.modResults.contents += `
+    // Tou2 release signing (see .github/workflows/build-release-apk.yml).
+    if (System.getenv('TOU2_KEYSTORE_FILE')) {
+        android.signingConfigs {
+            release {
+                storeFile file(System.getenv('TOU2_KEYSTORE_FILE'))
+                storePassword System.getenv('TOU2_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('TOU2_KEY_ALIAS')
+                keyPassword System.getenv('TOU2_KEY_PASSWORD')
+            }
+        }
+        android.buildTypes.release.signingConfig = android.signingConfigs.release
+    }
+`
+    }
+
     return config
   })
 }
