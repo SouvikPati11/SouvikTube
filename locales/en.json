@@ -4,10 +4,10 @@
     "faq": "FAQ",
     "faqHint": "Answers to common questions",
     "label": "About",
-    "code": "Source code",
-    "donate": "Donate",
     "updates": "Updates",
-    "hint": "Version info, updates, source code, and support links."
+    "hint": "Version info, updates, and support links.",
+    "follow": "Follow",
+    "instagramHint": "Follow me on Instagram"
   },
   "changelog": {
     "label": "Changelog",
@@ -407,7 +407,7 @@
     "importTakeout": "Import from YouTube takeout",
     "exportLabel": "Export bookmarks to a CSV file",
     "importSettings": "Import settings",
-    "importSettingsDescription": "Restore settings from a NouTube settings file",
+    "importSettingsDescription": "Restore settings from a Tou2 settings file",
     "importSettingsConfirm": "This replaces your current settings, blocklist, user styles and custom scripts. Continue?",
     "importSettingsWithScriptsConfirm": "This file contains {{count}} enabled custom script(s), which can run code inside YouTube. Only continue if you trust the file. Your current settings, blocklist, user styles and custom scripts will be replaced.",
     "importSettingsDone": "Imported: {{sections}}",
@@ -420,11 +420,11 @@
     "cookieFaq": "How to inject cookies",
     "injectCookieAction": "Inject cookie",
     "groupYouTube": "YouTube",
-    "groupNouTube": "NouTube",
+    "groupNouTube": "Tou2",
     "preferencesComments": "Comments",
     "sidebar": "Sidebar",
     "preferencesYouTubeHint": "YouTube preferences",
-    "preferencesNouTubeHint": "NouTube preferences"
+    "preferencesNouTubeHint": "Tou2 preferences"
   },
   "native": {
     "format_bestQuality": "Best quality",
@@ -449,17 +449,19 @@
     "restore": "Restore purchases",
     "manageIos": "Manage in App Store",
     "purchaseTitle": "Bind subscription",
-    "purchaseConfirm": "This subscription will be linked to {{email}} and unlock sync anywhere you log into this NouTube account.",
+    "purchaseConfirm": "This subscription will be linked to {{email}} and unlock sync anywhere you log into this Tou2 account.",
     "priceLoading": "Loading App Store price...",
     "purchasePending": "Purchase pending approval. Sync unlocks once it is approved.",
     "productUnavailable": "The App Store product is not available yet.",
-    "noPurchaseToRestore": "No NouTube Sync purchase found to restore.",
+    "noPurchaseToRestore": "No Tou2 Sync purchase found to restore.",
     "activeViaIos": "Active via App Store",
     "signOutSwitch": "Sign out and switch account",
     "expiresAt": "Renews or expires: {{value}}",
     "legalNotice": "Subscriptions renew automatically unless canceled. By subscribing, you agree to the Terms of Use (EULA) and Privacy Policy.",
     "termsOfUse": "Terms of Use (EULA)",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "signInWithGoogle": "Sign in with Google",
+    "googleSignInError": "Google sign-in failed. Please try again."
   },
   "pageLoadError": {
     "title": "Can't load this page",

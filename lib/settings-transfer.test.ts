@@ -7,6 +7,7 @@ import {
   createSettingsBackup,
   exportSettingsJson,
   parseSettingsBackup,
+  settingsBackupFilename,
   SETTINGS_BACKUP_KIND,
   SETTINGS_BACKUP_VERSION,
 } from './settings-transfer'
@@ -68,5 +69,25 @@ describe('settings transfer', () => {
 
     applySettingsBackup(parseSettingsBackup(exported))
     expect(userStyles$.customStyles.get().map((x) => x.name)).toContain('Wide')
+  })
+})
+
+describe('settings backup filename', () => {
+  it('uses the Tou2 prefix and keeps the .json extension', () => {
+    const name = settingsBackupFilename()
+    expect(name.startsWith('Tou2_')).toBe(true)
+    expect(name).toContain('_settings_')
+    expect(name.endsWith('.json')).toBe(true)
+  })
+
+  it('still imports a backup whose contents predate the Tou2 filename', () => {
+    // Import validates contents (kind/version), never the filename, so a
+    // file exported as NouTube_settings_*.json imports unchanged.
+    const oldExport = JSON.stringify({
+      kind: SETTINGS_BACKUP_KIND,
+      version: SETTINGS_BACKUP_VERSION,
+      settings: { hideShorts: false },
+    })
+    expect(() => parseSettingsBackup(oldExport)).not.toThrow()
   })
 })

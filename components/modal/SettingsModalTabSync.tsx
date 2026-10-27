@@ -6,6 +6,7 @@ import { useValue } from '@legendapp/state/react'
 import { auth$ } from '@/states/auth'
 import { isIos, isWeb, nIf } from '@/lib/utils'
 import { openDeleteAccount, signOut } from '@/lib/supabase/auth'
+import { GoogleSignInError, signInWithGoogle } from '@/lib/supabase/google-sign-in'
 import { prepareIosPurchase } from '@/lib/query'
 import { deliverIosTransaction, IOS_SYNC_PRODUCT_ID } from '@/lib/ios-billing'
 import { useMe } from '@/lib/hooks/useMe'
@@ -37,6 +38,8 @@ const SettingsBadge: React.FC<{ label: string }> = ({ label }) => {
 const getErrorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
 
 export const SettingsModalTabSync = () => {
+  const [googleBusy, setGoogleBusy] = useState(false)
+  const [googleError, setGoogleError] = useState<string | null>(null)
   const tw = useTwColor()
   const { user, userEmail, plan, accessToken } = useValue(auth$)
   const { me } = useMe()
@@ -104,7 +107,7 @@ export const SettingsModalTabSync = () => {
     }
   }
 
-  // The subscription follows the NouTube account, not the Apple ID, so make
+  // The subscription follows the app account, not the Apple ID, so make
   // the account it binds to explicit before StoreKit takes over.
   const confirmAccountBinding = () =>
     new Promise<boolean>((resolve) => {
@@ -161,6 +164,26 @@ export const SettingsModalTabSync = () => {
     { label: t('buttons.signOut'), handler: signOut },
   ]
 
+  // Google sign-in (Android Credential Manager). Cancellation is silent;
+  // every other failure shows a short message. A successful sign-in lands
+  // through the existing onAuthStateChange session handling in MainPage.
+  const handleGoogleSignIn = async () => {
+    if (googleBusy) return
+    setGoogleBusy(true)
+    setGoogleError(null)
+    try {
+      await signInWithGoogle()
+    } catch (error) {
+      if (error instanceof GoogleSignInError && error.kind === 'cancelled') {
+        // The user dismissed the account selector: not an error.
+      } else {
+        setGoogleError(error instanceof Error ? error.message : t('sync.googleSignInError'))
+      }
+    } finally {
+      setGoogleBusy(false)
+    }
+  }
+
   if (!user) {
     return (
       <View className="gap-6">
@@ -170,7 +193,7 @@ export const SettingsModalTabSync = () => {
             <View className="px-5 py-5">
               <NouText className="text-lg font-semibold">{t('sync.label')}</NouText>
               <NouText className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{t('sync.hint')}</NouText>
-              <View className="mt-5 items-start">
+              <View className="mt-5 items-start gap-3">
                 {/* Link renders a Text, so style it directly: a View nested in
                     it gets clipped on iOS. */}
                 <NouLink
@@ -178,8 +201,16 @@ export const SettingsModalTabSync = () => {
                   href="https://noutube.inks.page/auth/app"
                   target="_blank"
                 >
-                  Login NouTube
+                  Login Tou2
                 </NouLink>
+                {!isWeb && !isIos ? (
+                  <NouButton onPress={handleGoogleSignIn} disabled={googleBusy} loading={googleBusy}>
+                    {t('sync.signInWithGoogle')}
+                  </NouButton>
+                ) : null}
+                {googleError ? (
+                  <NouText className="text-sm text-red-500">{googleError}</NouText>
+                ) : null}
               </View>
             </View>
           </View>

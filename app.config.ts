@@ -17,7 +17,7 @@ const intentFilters = [
 
 module.exports = ({ config }: { config: ExpoConfig }) => {
   return {
-    name: 'SouvikTube',
+    name: 'Tou2',
     slug: 'souviktube',
     version,
     icon: './assets/images/icon.png',
@@ -40,8 +40,10 @@ module.exports = ({ config }: { config: ExpoConfig }) => {
       permissions: ['RECORD_AUDIO', 'MODIFY_AUDIO_SETTINGS', 'POST_NOTIFICATIONS', 'WAKE_LOCK'],
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
-        monochromeImage: './assets/images/monochrome-icon.png',
-        backgroundColor: '#ffffff',
+        // Dark tone sampled from the new Tou2 logo's surround, so the
+        // adaptive background blends with the artwork instead of flashing
+        // white around it under icon masks (the previous #ffffff did).
+        backgroundColor: '#26222c',
       },
       predictiveBackGestureEnabled: false,
       package: 'com.souvikpati.souviktube',

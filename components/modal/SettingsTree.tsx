@@ -1,12 +1,12 @@
 import { Pressable, ScrollView, View, useColorScheme } from 'react-native'
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useState, type ReactNode } from 'react'
 import { clsx, isWeb, nIf } from '@/lib/utils'
 import { useValue } from '@legendapp/state/react'
-import { auth$ } from '@/states/auth'
 import { settings$ } from '@/states/settings'
 import { t } from 'i18next'
-import { capitalize } from 'es-toolkit'
 import MaterialIcons, { type MaterialIconsIconName } from '@react-native-vector-icons/material-icons'
+import AntDesign from '@react-native-vector-icons/ant-design'
+import { ABOUT_SOCIAL_LINKS, WEBSITE_URL } from '@/lib/about-links'
 import { queryClient } from '@/lib/query/client'
 import { getReleaseFeedQuery } from '@/lib/query/changelog'
 import { mainClient } from '@/lib/main-client'
@@ -26,14 +26,10 @@ import { SettingsChangelogContent } from './SettingsModalTabChangelog'
 import { SettingsUserStylesContent } from './SettingsUserStylesContent'
 import { SettingsBlocklistContent } from './SettingsBlocklistContent'
 import { useTwColor } from '@/lib/theme'
-import { FAQ_URL } from '@/lib/help'
 
-const repo = 'https://github.com/nonbili/NouTube'
-const donateLinks = [
-  { label: 'GitHub Sponsors', detail: 'github.com/sponsors/rnons', url: 'https://github.com/sponsors/rnons' },
-  { label: 'Liberapay', detail: 'liberapay.com/rnons', url: 'https://liberapay.com/rnons' },
-  { label: 'PayPal', detail: 'paypal.me/rnons', url: 'https://paypal.me/rnons' },
-]
+// The upstream repository and donation links were removed from the About
+// screen. The social links that remain live in lib/about-links.ts.
+
 export const surfaceCls =
   'overflow-hidden rounded-[24px] bg-white dark:bg-zinc-900'
 export const sectionLabelCls = 'mb-2 px-1 text-[11px] uppercase tracking-[0.18em] text-zinc-600 dark:text-zinc-500'
@@ -103,8 +99,11 @@ export const SettingsExternalRow: React.FC<{
   detail: string
   href: string
   icon?: MaterialIconsIconName
+  // For brands without a Material icon (e.g. Instagram), the caller supplies
+  // the icon node instead; it renders in the same rounded icon slot.
+  iconNode?: ReactNode
   isLast?: boolean
-}> = ({ title, detail, href, icon = 'open-in-new', isLast = false }) => {
+}> = ({ title, detail, href, icon = 'open-in-new', iconNode, isLast = false }) => {
   const tw = useTwColor()
   const colorScheme = useColorScheme()
   const isDark = colorScheme !== 'light'
@@ -117,7 +116,9 @@ export const SettingsExternalRow: React.FC<{
         )}
       >
         <View className={iconWrapCls}>
-          <MaterialIcons name={icon} color={isDark ? tw('zinc-300') : tw('slate-600')} size={18} />
+          {iconNode ?? (
+            <MaterialIcons name={icon} color={isDark ? tw('zinc-300') : tw('slate-600')} size={18} />
+          )}
         </View>
         <View className="flex-1">
           <NouText className="font-medium">{title}</NouText>
@@ -129,8 +130,14 @@ export const SettingsExternalRow: React.FC<{
   )
 }
 
-function formatPlanLabel(plan?: string) {
-  return plan ? capitalize(plan) : 'Free'
+// Instagram's glyph is not in Material Icons, so the About screen renders
+// AntDesign's instagram glyph in the same icon slot (and colour treatment)
+// as the other external rows.
+const InstagramIcon = () => {
+  const tw = useTwColor()
+  const colorScheme = useColorScheme()
+  const isDark = colorScheme !== 'light'
+  return <AntDesign name="instagram" size={18} color={isDark ? tw('zinc-300') : tw('slate-600')} />
 }
 
 export interface SettingsTreeHandle {
@@ -161,7 +168,6 @@ export const SettingsTree = forwardRef<
 >(({ version, onExit, renderSync, showShellTools = true }, ref) => {
   const tw = useTwColor()
   const theme = useValue(settings$.theme)
-  const { user, plan } = useValue(auth$)
   const colorScheme = useColorScheme()
   const isDark = colorScheme !== 'light'
   const [pageStack, setPageStack] = useState<SettingsPage[]>(['home'])
@@ -304,13 +310,6 @@ export const SettingsTree = forwardRef<
             <SettingsSection label={t('settings.tools')}>
               <View className={surfaceCls}>
                 <SettingsNavRow
-                  title={t('sync.label')}
-                  description={user?.email || t('settings.syncHintShort')}
-                  icon="sync"
-                  meta={formatPlanLabel(plan)}
-                  onPress={() => pushPage('sync')}
-                />
-                <SettingsNavRow
                   title={t('settings.transfer')}
                   description={t('settings.transferHint')}
                   icon="import-export"
@@ -390,7 +389,7 @@ export const SettingsTree = forwardRef<
           <View className="gap-6">
             <View className="rounded-[28px] bg-white dark:bg-zinc-900 px-5 py-5">
               <NouText className="text-[11px] uppercase tracking-[0.18em] text-zinc-600 dark:text-zinc-500">
-                NouTube
+                Tou2
               </NouText>
               <NouText className="mt-2 text-xl font-semibold tracking-tight">v{version}</NouText>
             </View>
@@ -415,28 +414,23 @@ export const SettingsTree = forwardRef<
                 <SettingsExternalRow
                   title={t('about.faq')}
                   detail={t('about.faqHint')}
-                  href={FAQ_URL}
+                  href={WEBSITE_URL}
                   icon="help-outline"
                   isLast
                 />
               </View>
             </SettingsSection>
 
-            <SettingsSection label={t('about.code')}>
+            <SettingsSection label={t('about.follow')}>
               <View className={surfaceCls}>
-                <SettingsExternalRow title="GitHub" detail="github.com/nonbili/NouTube" href={repo} icon="code" isLast />
-              </View>
-            </SettingsSection>
-
-            <SettingsSection label={t('about.donate')}>
-              <View className={surfaceCls}>
-                {donateLinks.map((item, index) => (
+                {ABOUT_SOCIAL_LINKS.map((item, index) => (
                   <SettingsExternalRow
-                    key={item.url}
-                    title={item.label}
-                    detail={item.detail}
-                    href={item.url}
-                    isLast={index === donateLinks.length - 1}
+                    key={item.href}
+                    title={item.title}
+                    detail={t('about.instagramHint')}
+                    href={item.href}
+                    iconNode={<InstagramIcon />}
+                    isLast={index === ABOUT_SOCIAL_LINKS.length - 1}
                   />
                 ))}
               </View>

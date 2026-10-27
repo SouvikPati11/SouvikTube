@@ -14,7 +14,7 @@ import NouTubeViewModule from '@/modules/nou-tube-view'
 import { showToast } from '@/lib/toast'
 import { showConfirm } from '@/lib/confirm'
 import JSZip from 'jszip'
-import { exportBookmarksCsv } from '@/lib/export'
+import { bookmarksCsvFilename, exportBookmarksCsv } from '@/lib/export'
 import { applySettingsBackup, exportSettingsJson, parseSettingsBackup, settingsBackupFilename } from '@/lib/settings-transfer'
 import { t } from 'i18next'
 import { saveFile } from '@/lib/file'
@@ -1124,8 +1124,7 @@ export const SettingsTransferContent: React.FC<{
   }
 
   const onClickExportList = async () => {
-    const filename = `NouTube_bookmarks_${Date.now()}.csv`
-    await saveFile(filename, exportBookmarksCsv())
+    await saveFile(bookmarksCsvFilename(), exportBookmarksCsv())
   }
 
   const onClickExportSettings = async () => {

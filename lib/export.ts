@@ -4,6 +4,12 @@ import { folders$ } from '@/states/folders'
 
 export const BOOKMARKS_CSV_HEADER = ['url', 'title', 'folder', 'tab', 'thumbnail', 'channel_id'] as const
 
+/** Filename for a bookmarks CSV export. Import never checks the filename, so
+ *  older `NouTube_bookmarks_*.csv` exports keep importing. */
+export function bookmarksCsvFilename(): string {
+  return `Tou2_bookmarks_${Date.now()}.csv`
+}
+
 /**
  * Export bookmarks as CSV. Folders are exported by name plus the tab they
  * belong to, so `importBookmarksCsv` can recreate them.
