@@ -68,17 +68,28 @@ jobs:
           echo "App identity verified: com.souvikpati.souviktube / 1.0.0 / Tou2"
 
       - name: Set up release keystore from secrets
-        # Skipped when the secrets are absent: the build then produces an
-        # unsigned APK and the artifact name says so (see Detect step).
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        # Secrets cannot be used in a step-level `if:` condition (GitHub
+        # rejects the workflow file), so the secret is passed via env and
+        # tested in bash instead. When it is absent the step exits quietly
+        # and the build produces an unsigned APK; the artifact name says so
+        # (see Detect step).
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/tou2-release.keystore
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "No release keystore secret configured; building unsigned."
+            exit 0
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > android/tou2-release.keystore
           {
             echo "TOU2_KEYSTORE_FILE=$PWD/android/tou2-release.keystore"
-            echo "TOU2_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
-            echo "TOU2_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}"
-            echo "TOU2_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}"
+            echo "TOU2_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD"
+            echo "TOU2_KEY_ALIAS=$KEY_ALIAS"
+            echo "TOU2_KEY_PASSWORD=$KEY_PASSWORD"
           } >> "$GITHUB_ENV"
           echo "Release keystore configured from secrets."
 
