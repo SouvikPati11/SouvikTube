@@ -16,6 +16,15 @@ name: Build Release APK
 
 on:
   workflow_dispatch:
+  # Manual dispatch requires this file to be on the default branch, which it
+  # is not yet (PR #4 is unmerged), so until then the release build also runs
+  # when this workflow file itself is pushed to tou2-rebrand. The paths
+  # filter means ordinary code pushes never trigger a release build.
+  push:
+    branches:
+      - tou2-rebrand
+    paths:
+      - '.github/workflows/build-release-apk.yml'
 
 jobs:
   build-release-apk:
